@@ -1,1 +1,3 @@
 \venv
+.env
+data/ticks_dataset_test.xlsx
