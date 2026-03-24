@@ -1,6 +1,6 @@
 from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geometry, WKBElement
 from sqlalchemy import Boolean, String
 from typing import List
 
@@ -10,9 +10,10 @@ class Region(Base):
     __tablename__ = "regions"
 
     name: Mapped[str] = mapped_column(String(255), unique=True)
+
     description: Mapped[str | None]
 
-    boundary: Mapped[str] = mapped_column(
+    boundary: Mapped[WKBElement] = mapped_column(
         Geometry(geometry_type="MULTIPOLYGON", srid=4326)
     )
 
@@ -23,3 +24,5 @@ class Region(Base):
         back_populates="region",
         cascade="all, delete-orphan"
     )
+
+    bites = relationship("Bite", back_populates="region")

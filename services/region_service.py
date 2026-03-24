@@ -5,10 +5,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import Region
-from repositories.cluster_repo import generate_clusters_for_region
 from repositories.region_repo import create_region, list_regions, get_region
 
-GRID_CELL_SIZE_METERS = 5000
+#GRID_CELL_SIZE_METERS = 5000
 
 
 class RegionService:
@@ -38,9 +37,9 @@ class RegionService:
                 description=description
             )
 
-            created_count = await generate_clusters_for_region(self.db, region_id=region.id)
+            #created_count = await generate_clusters_for_region(self.db, region_id=region.id)
 
-            print(f"Created {created_count} clusters")
+            #print(f"Created {created_count} clusters")
 
             await self.db.commit()
             await self.db.refresh(region)

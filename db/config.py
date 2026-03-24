@@ -27,4 +27,4 @@ print("DB URL =>", settings.get_db_url())
 print("DB HOST =>", settings.DB_HOST)
 
 
-GRID_CELL_SIZE_METERS: int = 5000
+#GRID_CELL_SIZE_METERS: int = 5000

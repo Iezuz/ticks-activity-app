@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Dict, Any
 
 
 class RegionCreate(BaseModel):
@@ -8,11 +8,15 @@ class RegionCreate(BaseModel):
     description: Optional[str] = None
 
 
-class RegionRead(BaseModel):
+class RegionListRead(BaseModel):
     id: int
     name: str
     description: Optional[str]
     is_active: bool
+
+
+class RegionDetailRead(RegionListRead):
+    boundary: Dict[str, Any]
 
     class Config:
         from_attributes = True

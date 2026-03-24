@@ -1,30 +1,49 @@
 from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import date
-from sqlalchemy import BigInteger
-from geoalchemy2 import Geometry
+from sqlalchemy import BigInteger, Boolean
+from geoalchemy2 import Geometry, WKBElement
 from sqlalchemy import ForeignKey
 
 
 class Bite(Base):
 
-    __tablename__ = 'bites'
+    __tablename__ = "bites"
 
     date_of_bite: Mapped[date]
 
     location_description: Mapped[str | None]
 
-    temperature: Mapped[float | None]
+    point_of_bite: Mapped[str] = mapped_column(
+        Geometry("POINT", srid=4326)
+    )
 
-    elevation: Mapped[float | None]
+    region_id: Mapped[int] = mapped_column(
+        BigInteger,
+        ForeignKey("regions.id"),
+        nullable=True
+    )
 
-    snow_depth: Mapped[float | None]
+    region: Mapped["Region"] = relationship(
+        "Region",
+        back_populates="bites",
+    )
 
-    point_of_bite: Mapped[str] = mapped_column(Geometry('POINT', srid=4326))
-
-    cluster_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey('clusters.id'))
+    cluster_id: Mapped[int | None] = mapped_column(
+        BigInteger,
+        ForeignKey("clusters.id"),
+        nullable=True
+    )
 
     cluster: Mapped["Cluster"] = relationship(
         "Cluster",
         back_populates="bites"
     )
+
+    processed_for_cluster_data: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False
+    )
+
+

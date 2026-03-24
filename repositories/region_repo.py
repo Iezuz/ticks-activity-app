@@ -1,5 +1,7 @@
+import json
+
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from geoalchemy2 import WKTElement
 from typing import Optional, Sequence
 
@@ -32,7 +34,25 @@ async def list_regions(db: AsyncSession) -> Sequence[Region]:
     return result.scalars().all()
 
 
-async def get_region(db: AsyncSession, region_id: int) -> Optional[Region]:
-    q = select(Region).where(Region.id == region_id)
-    result = await db.execute(q)
-    return result.scalars().first()
+async def get_region(db: AsyncSession, region_id: int):
+    stmt = select(
+        Region.id,
+        Region.name,
+        Region.description,
+        Region.is_active,
+        func.ST_AsGeoJSON(Region.boundary).label("boundary")
+    ).where(Region.id == region_id)
+
+    result = await db.execute(stmt)
+    row = result.first()
+
+    if not row:
+        return None
+
+    return {
+        "id": row.id,
+        "name": row.name,
+        "description": row.description,
+        "is_active": row.is_active,
+        "boundary": json.loads(row.boundary)
+    }
